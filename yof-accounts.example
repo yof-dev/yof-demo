@@ -1,0 +1,5 @@
+# The demo's three test accounts, for yof attack. These are made-up tokens that only the demo app accepts.
+# In your own app, keep real test-account tokens in your CI secrets or a file that git ignores, never in the repository.
+YOF_ATTACK_A="Bearer demo-token-a"
+YOF_ATTACK_B="Bearer demo-token-b"
+YOF_ATTACK_ADMIN="Bearer demo-token-admin"

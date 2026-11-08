@@ -1,0 +1,14 @@
+# yof check on every push and pull request: leaked keys and made-up packages.
+name: yof
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  yof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: yof-dev/yof@v0.2.0
+        with:
+          path: .
+          offline: false

@@ -1,0 +1,22 @@
+{
+  "app": "localhost:3000",
+  "consent": "I own localhost:3000 and allow yof attack to test it and its preview builds with my own test accounts.",
+  "accounts": {
+    "a": { "header": "Authorization", "env": "YOF_ATTACK_A" },
+    "b": { "header": "Authorization", "env": "YOF_ATTACK_B" },
+    "admin": { "header": "Authorization", "env": "YOF_ATTACK_ADMIN" }
+  },
+  "routes": ["/api/me", "/api/profile", "/api/notes"],
+  "admin": ["/api/admin/users"],
+  "objects": [{
+    "create": { "path": "/api/notes", "body": "{\"title\":\"{{marker}}\"}" },
+    "idPath": "id",
+    "read": "/api/notes/{id}",
+    "list": "/api/notes",
+    "update": { "method": "PATCH", "path": "/api/notes/{id}", "body": "{\"title\":\"{{marker}}\"}" },
+    "delete": "/api/notes/{id}"
+  }],
+  "surface": { "redirectPaths": ["/login"], "rateLimit": false },
+  "production": { "enabled": false },
+  "budget": { "requests": 200, "seconds": 60, "perSecond": 8 }
+}

@@ -1,0 +1,25 @@
+# yof attack on the demo app, started on the runner itself (localhost). The demo has one planted problem, so this job
+# reports it and fails until you fix it: that is the point of the demo. The tokens are the demo's made-up accounts;
+# in your own app they come from your repository's secrets.
+name: yof attack (demo)
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  attack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Start the demo app
+        run: |
+          node server.mjs &
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:3000/ > /dev/null && break; sleep 0.5; done
+      - name: yof attack
+        env:
+          YOF_ATTACK_A: Bearer demo-token-a
+          YOF_ATTACK_B: Bearer demo-token-b
+          YOF_ATTACK_ADMIN: Bearer demo-token-admin
+        run: npx --yes @yof/cli@0.2.0 attack http://localhost:3000

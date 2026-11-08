@@ -1,0 +1,20 @@
+{
+  "name": "yof-demo",
+  "version": "1.1.0",
+  "private": true,
+  "description": "A tiny notes app with five planted, clearly labelled problems, for trying yof. Never deploy it.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "start:fixed": "YOF_DEMO_FIXED=1 node server.mjs",
+    "check": "npx --yes @yof/cli@0.2.0 check",
+    "attack": "npx --yes @yof/cli@0.2.0 attack http://localhost:3000"
+  },
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}
