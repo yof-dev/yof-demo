@@ -1,3 +1,22 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/yof-logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/assets/yof-logo-light.svg">
+    <img alt="yof" src=".github/assets/yof-logo-light.svg" width="220">
+  </picture>
+</p>
+
+<p align="center"><strong>Security checks for apps you build with AI</strong></p>
+
+<p align="center">Catch leaked keys, open databases and risky packages before you ship. Free and open source.</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@yof/cli"><img alt="@yof/cli on npm" src="https://img.shields.io/npm/v/@yof/cli?label=%40yof%2Fcli"></a>
+  <a href="./LICENSE"><img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-blue"></a>
+  <a href="https://yof.io/benchmark"><img alt="Benchmark" src="https://img.shields.io/badge/benchmark-results-36c98a"></a>
+  <a href="https://yof.io"><img alt="yof.io" src="https://img.shields.io/badge/web-yof.io-0c0d11"></a>
+</p>
+
 # yof demo
 
 A tiny notes app with **five planted problems**, so you can try [yof](https://yof.io) on something that is safe to break. Run it on your machine, watch `yof check` and `yof attack` find the problems, then fix them and watch the findings go away.
