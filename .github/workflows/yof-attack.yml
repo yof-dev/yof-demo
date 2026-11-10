@@ -1,6 +1,9 @@
-# yof attack on the demo app, started on the runner itself (localhost). The demo has one planted problem, so this job
-# reports it and fails until you fix it: that is the point of the demo. The tokens are the demo's made-up accounts;
-# in your own app they come from your repository's secrets.
+# yof attack on the demo app, started on the runner itself (localhost). The demo has three planted problems that
+# yof attack finds ON PURPOSE (README "The planted problems": an IDOR, a route that answers without a sign-in, missing
+# security headers). In this demo the job passes when yof finds exactly those, and fails when it finds anything else
+# (a real problem) or a planted one stops being found without the README saying it was fixed.
+# In your own app, keep only the "yof attack" step: there any finding fails the job, which is what you want.
+# The tokens are the demo's made-up accounts; in your own app they come from your repository's secrets.
 name: yof attack (demo)
 on: [push, pull_request]
 permissions:
@@ -17,9 +20,34 @@ jobs:
         run: |
           node server.mjs &
           for i in $(seq 1 20); do curl -fs http://127.0.0.1:3000/ > /dev/null && break; sleep 0.5; done
-      - name: yof attack
+      - name: yof attack (finds the planted problems on purpose)
         env:
           YOF_ATTACK_A: Bearer demo-token-a
           YOF_ATTACK_B: Bearer demo-token-b
           YOF_ATTACK_ADMIN: Bearer demo-token-admin
-        run: npx --yes @yof/cli@0.2.0 attack http://localhost:3000
+        # Exit code 1 means "findings": expected here, so the next step decides. Anything else (2 = could not run) fails.
+        run: |
+          set +e
+          npx --yes @yof/cli@0.2.0 attack http://localhost:3000 --json > yof-attack.json
+          code=$?
+          set -e
+          if [ "$code" -ne 0 ] && [ "$code" -ne 1 ]; then echo "yof attack could not run (exit $code)."; exit "$code"; fi
+      - name: The findings are exactly the planted ones
+        run: |
+          node -e '
+            const planted = ["attack.auth_bypass", "attack.missing_headers", "attack.tenant_read"];
+            const r = JSON.parse(require("fs").readFileSync("yof-attack.json", "utf8"));
+            const found = [...new Set((r.findings || []).map((f) => f.ruleId))].sort();
+            const extra = found.filter((id) => !planted.includes(id));
+            const missing = planted.filter((id) => !found.includes(id));
+            const lines = [
+              "## yof attack on the demo",
+              "",
+              `Found ${found.length - extra.length} of ${planted.length} planted problems (on purpose: this demo is built to have them).`,
+              ...found.map((id) => `- ${id}${planted.includes(id) ? " (planted)" : " (NOT planted: a real problem)"}`),
+              ...missing.map((id) => `- ${id} was not found (fixed? then update the README table and this list)`),
+            ];
+            require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
+            console.log(lines.join("\n"));
+            if (extra.length || missing.length) process.exit(1);
+          '
